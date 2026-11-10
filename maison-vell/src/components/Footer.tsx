@@ -105,11 +105,20 @@ export const Footer: React.FC = () => {
         <span className="footer-copy">
           © 2027 MAISON VELL S.A.S. ALL RIGHTS RESERVED. SPRING SUMMER 2027 ARCHIVE.
         </span>
-        <div className="footer-socials wide">
-          <a href="#ig">INSTAGRAM</a>
-          <a href="#vogue">VOGUE RUNWAY</a>
-          <a href="#atelier">THE ATELIER</a>
-        </div>
+        <a
+          href="https://softzenit.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-powered-by"
+          title="Powered by Softzen IT"
+        >
+          <span className="wide">POWERED BY</span>
+          <img
+            src="/softzen-it-logo-transparent.png"
+            alt="Softzen IT"
+            className="footer-powered-logo"
+          />
+        </a>
       </div>
     </footer>
   );

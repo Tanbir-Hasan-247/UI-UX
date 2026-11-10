@@ -25,6 +25,7 @@ import { SearchModal } from './components/SearchModal.tsx';
 import { CartDrawer, CartItem } from './components/CartDrawer.tsx';
 import { WishlistDrawer } from './components/WishlistDrawer.tsx';
 import { QuickViewModal } from './components/QuickViewModal.tsx';
+import { PoweredByBadge } from './components/PoweredByBadge.tsx';
 
 const N = LOOKS.length;
 const wrap = (x: number, n: number) => ((x % n) + n) % n;
@@ -570,6 +571,9 @@ export default function App() {
         isSaved={quickViewProduct ? savedItemIds.has(quickViewProduct.id) : false}
         onToggleSaved={handleToggleSaved}
       />
+
+      {/* Persistent Right Bottom Corner Badge */}
+      <PoweredByBadge />
 
       {/* Initial Preload Curtain */}
       <div className={`wait ${loaded ? 'gone' : ''}`} id="wait" />
