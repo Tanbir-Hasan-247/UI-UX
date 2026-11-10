@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=c5094fae-9f24-413b-8abb-01240513b740
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#FAFAF8" />
+    <meta name="description" content="Independent clothing label." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1.2 -1.2 2.4 2.4'%3E%3Cpath d='M0 -1 Q0.13 -0.13 1 0 Q0.13 0.13 0 1 Q-0.13 0.13 -1 0 Q-0.13 -0.13 0 -1Z' fill='%23111'/%3E%3C/svg%3E" />
+    <title>Store</title>
+    <script type="module" crossorigin src="/assets/index-Ce0ZwHTC.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BU4obPUE.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="c5094fae-9f24-413b-8abb-01240513b740" data-app-host="app.netlify.com" data-account-tier="free"></script>
