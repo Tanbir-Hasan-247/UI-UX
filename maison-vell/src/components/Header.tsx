@@ -55,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
           aria-label="Maison Vell"
           onClick={(e) => handleNavClick(e, 'Runway', '#runway')}
         >
-          Maison Vell
+          NOXVELYN
         </a>
 
         <nav className="tabs wide" aria-label="Sections">

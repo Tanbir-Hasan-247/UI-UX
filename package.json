@@ -1,0 +1,11 @@
+{
+  "name": "ui-ux-workspace",
+  "private": true,
+  "description": "Workspace for UI/UX projects",
+  "scripts": {
+    "dev:maison": "npm --prefix maison-vell run dev",
+    "dev:ecommerce": "npm --prefix softzen-360-ecommerce run dev",
+    "dev:runway": "npm --prefix softzen-3d-runway run dev",
+    "build:all": "npm --prefix maison-vell run build && npm --prefix softzen-360-ecommerce run build && npm --prefix softzen-3d-runway run build"
+  }
+}
