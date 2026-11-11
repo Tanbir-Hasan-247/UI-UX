@@ -14,11 +14,7 @@ export const Header = () => {
   return (
     <header className="site-header shopify-section-group-header-group">
       <a href="./" className="brand" aria-label="Damlook home">
-        <img
-          src="/images/damlook-logo.png"
-          style={{ height: '30px', width: 'auto', objectFit: 'contain' }}
-          alt="Damlook"
-        />
+        VELVORYX
       </a>
 
       <nav aria-label="Main navigation">
