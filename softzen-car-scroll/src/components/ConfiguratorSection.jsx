@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const PAINTS = [
   { id: 'obsidian', name: 'Matte Obsidian', hex: '#14181f', price: 0, filter: 'none' },
@@ -6,55 +6,73 @@ const PAINTS = [
     id: 'gunmetal',
     name: 'Frozen Gunmetal',
     hex: '#475569',
-    price: 2400,
+    price: 285000,
     filter: 'brightness(1.14) contrast(0.95)',
   },
   {
     id: 'sapphire',
     name: 'Midnight Sapphire',
     hex: '#1e3a5f',
-    price: 1850,
+    price: 220000,
     filter: 'hue-rotate(15deg) saturate(1.25) brightness(1.04)',
   },
   {
     id: 'graphite',
     name: 'Stealth Bronze',
     hex: '#44382c',
-    price: 2950,
+    price: 350000,
     filter: 'sepia(0.28) contrast(1.06) brightness(0.98)',
   },
 ]
 
 const WHEELS = [
   { id: 'forged-20', name: '20" Forged M-Split Black', price: 0 },
-  { id: 'aero-21', name: '21" Carbon Aero Bi-Color', price: 3200 },
-  { id: 'track-20', name: '20" Center-Lock Satin Gold', price: 4600 },
+  { id: 'aero-21', name: '21" Carbon Aero Bi-Color', price: 380000 },
+  { id: 'track-20', name: '20" Center-Lock Satin Gold', price: 550000 },
 ]
 
 const INTERIORS = [
   { id: 'merino', name: 'Full Merino Black Leather', hex: '#171717', price: 0 },
-  { id: 'cognac', name: 'Cognac Saddle Nappa', hex: '#7c3f1d', price: 1900 },
-  { id: 'alcantara', name: 'Alcantara Carbon Track', hex: '#27272a', price: 2800 },
+  { id: 'cognac', name: 'Cognac Saddle Nappa', hex: '#7c3f1d', price: 225000 },
+  { id: 'alcantara', name: 'Alcantara Carbon Track', hex: '#27272a', price: 335000 },
 ]
 
-const BASE_MSRP = 84900
+const EXTERIOR_IMG =
+  'https://images.unsplash.com/photo-1570274419210-bcbb11aa8f73?auto=format&fit=crop&w=1400&q=85'
+const INTERIOR_IMG =
+  'https://images.unsplash.com/photo-1735879254701-e26b19bbf694?auto=format&fit=crop&w=1400&q=85'
 
-export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
+const BASE_BDT = 10200000
+
+function formatBdt(amount) {
+  return `৳${amount.toLocaleString('en-IN')}`
+}
+
+export default function ConfiguratorSection({
+  selectedTrim,
+  onLockBuild,
+  onPriceChange,
+  onNavigate,
+}) {
   const [paintId, setPaintId] = useState('obsidian')
   const [wheelId, setWheelId] = useState('forged-20')
   const [interiorId, setInteriorId] = useState('merino')
+  const [viewMode, setViewMode] = useState('exterior')
 
   const paint = PAINTS.find((p) => p.id === paintId) || PAINTS[0]
   const wheel = WHEELS.find((w) => w.id === wheelId) || WHEELS[0]
   const interior = INTERIORS.find((i) => i.id === interiorId) || INTERIORS[0]
 
-  const total = BASE_MSRP + paint.price + wheel.price + interior.price
+  const totalBdt = BASE_BDT + paint.price + wheel.price + interior.price
+
+  useEffect(() => {
+    onPriceChange?.(totalBdt)
+  }, [totalBdt, onPriceChange])
 
   const handleReserveBuild = () => {
-    const summary = `${selectedTrim || 'M4 Shadow Edition'} · ${paint.name} · ${wheel.name} · ${interior.name} ($${total.toLocaleString()})`
+    const summary = `${selectedTrim || 'M4 Shadow Edition'} · ${paint.name} · ${wheel.name} · ${interior.name} (${formatBdt(totalBdt)})`
     onLockBuild?.(summary)
-    const el = document.getElementById('reserve')
-    el?.scrollIntoView({ behavior: 'smooth' })
+    onNavigate?.('/reserve')
   }
 
   return (
@@ -62,12 +80,12 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
       <div className="section-container">
         <div className="section-header">
           <div>
-            <div className="beat-eyebrow">Bespoke Studio</div>
+            <div className="beat-eyebrow">Bespoke Studio · Bangladesh</div>
             <h2 className="section-title">CONFIGURE YOUR SHADOW.</h2>
           </div>
           <p className="section-lead">
-            Tailor exterior finish, forged wheel architecture, and cabin trim.
-            Lock your build to prioritize showroom allocation.
+            Tailor exterior finish, forged wheel architecture, and cabin trim in
+            BDT. Switch between exterior and cockpit views below.
           </p>
         </div>
 
@@ -75,16 +93,43 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
           <div className="config-stage">
             <div className="config-image-wrap">
               <img
-                src="/frames/frame00085.png"
-                alt={`ACI Motors ${paint.name}`}
-                style={{ filter: paint.filter }}
+                src={viewMode === 'exterior' ? EXTERIOR_IMG : INTERIOR_IMG}
+                alt={`ACI Motors ${viewMode === 'exterior' ? paint.name : interior.name}`}
+                style={{
+                  filter: viewMode === 'exterior' ? paint.filter : 'none',
+                }}
+                onError={(e) => {
+                  e.currentTarget.src = '/frames/frame00085.png'
+                }}
               />
               <div className="config-stage-tag">
                 <span
                   className="swatch-dot"
-                  style={{ backgroundColor: paint.hex }}
+                  style={{
+                    backgroundColor:
+                      viewMode === 'exterior' ? paint.hex : interior.hex,
+                  }}
                 />
-                <span>{paint.name}</span>
+                <span>
+                  {viewMode === 'exterior' ? paint.name : interior.name}
+                </span>
+              </div>
+
+              <div className="config-view-switch">
+                <button
+                  type="button"
+                  className={`view-switch-btn ${viewMode === 'exterior' ? 'view-switch-btn--active' : ''}`}
+                  onClick={() => setViewMode('exterior')}
+                >
+                  Exterior
+                </button>
+                <button
+                  type="button"
+                  className={`view-switch-btn ${viewMode === 'interior' ? 'view-switch-btn--active' : ''}`}
+                  onClick={() => setViewMode('interior')}
+                >
+                  Cockpit
+                </button>
               </div>
             </div>
 
@@ -96,10 +141,8 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
                 </div>
               </div>
               <div className="config-price-block">
-                <span className="config-price-label">Estimated MSRP</span>
-                <span className="config-price-val">
-                  ${total.toLocaleString()}
-                </span>
+                <span className="config-price-label">Ex-Showroom Dhaka</span>
+                <span className="config-price-val">{formatBdt(totalBdt)}</span>
               </div>
             </div>
           </div>
@@ -109,9 +152,7 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
               <div className="config-group-head">
                 <span>01 / Exterior Paint</span>
                 <span className="config-addon">
-                  {paint.price === 0
-                    ? 'Included'
-                    : `+$${paint.price.toLocaleString()}`}
+                  {paint.price === 0 ? 'Included' : `+${formatBdt(paint.price)}`}
                 </span>
               </div>
               <div className="swatch-grid">
@@ -120,7 +161,10 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
                     key={p.id}
                     type="button"
                     className={`swatch-btn ${p.id === paintId ? 'swatch-btn--active' : ''}`}
-                    onClick={() => setPaintId(p.id)}
+                    onClick={() => {
+                      setPaintId(p.id)
+                      setViewMode('exterior')
+                    }}
                   >
                     <span
                       className="swatch-circle"
@@ -136,9 +180,7 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
               <div className="config-group-head">
                 <span>02 / Wheel Package</span>
                 <span className="config-addon">
-                  {wheel.price === 0
-                    ? 'Included'
-                    : `+$${wheel.price.toLocaleString()}`}
+                  {wheel.price === 0 ? 'Included' : `+${formatBdt(wheel.price)}`}
                 </span>
               </div>
               <div className="option-stack">
@@ -151,7 +193,7 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
                   >
                     <span>{w.name}</span>
                     <span className="option-row-price">
-                      {w.price === 0 ? 'STD' : `+$${w.price.toLocaleString()}`}
+                      {w.price === 0 ? 'STD' : `+${formatBdt(w.price)}`}
                     </span>
                   </button>
                 ))}
@@ -164,7 +206,7 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
                 <span className="config-addon">
                   {interior.price === 0
                     ? 'Included'
-                    : `+$${interior.price.toLocaleString()}`}
+                    : `+${formatBdt(interior.price)}`}
                 </span>
               </div>
               <div className="swatch-grid">
@@ -173,7 +215,10 @@ export default function ConfiguratorSection({ selectedTrim, onLockBuild }) {
                     key={i.id}
                     type="button"
                     className={`swatch-btn ${i.id === interiorId ? 'swatch-btn--active' : ''}`}
-                    onClick={() => setInteriorId(i.id)}
+                    onClick={() => {
+                      setInteriorId(i.id)
+                      setViewMode('interior')
+                    }}
                   >
                     <span
                       className="swatch-circle"

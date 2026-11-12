@@ -1,9 +1,10 @@
 import { useState } from 'react'
 
 const SHOWROOMS = [
-  'ACI Motors Flagship — Gulshan Avenue, Dhaka',
-  'ACI Motors Lounge — Nasirabad, Chattogram',
-  'ACI Motors Studio — Zindabazar, Sylhet',
+  'ACI Centre — 245 Tejgaon Industrial Area, Dhaka-1208',
+  'ACI Motors Flagship — Gulshan Avenue, Dhaka-1212',
+  'ACI Motors Lounge — CDA Avenue, Nasirabad, Chattogram',
+  'ACI Motors Studio — East Zindabazar, Sylhet-3100',
 ]
 
 export default function ReserveSection({ buildSummary }) {
