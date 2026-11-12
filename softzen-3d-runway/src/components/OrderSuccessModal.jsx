@@ -42,9 +42,12 @@ export const OrderSuccessModal = () => {
       </head>
       <body>
         <div class="header">
-          <div>
-            <div class="brand">DAMLOOK RUNWAY</div>
-            <div style="font-size: 13px; color: #555;">Official Order Receipt</div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <img src="/images/noxvelyn-logo.png" alt="NOXVELYN" style="height: 36px; width: auto;" />
+            <div>
+              <div class="brand">NOXVELYN RUNWAY</div>
+              <div style="font-size: 13px; color: #555;">Official Order Receipt</div>
+            </div>
           </div>
           <div style="text-align: right;">
             <div style="font-size: 16px; font-weight: 700;">${latestOrder.orderId}</div>
@@ -100,7 +103,7 @@ export const OrderSuccessModal = () => {
         </div>
 
         <div class="footer">
-          <p>Thank you for choosing Damlook Runway.<br>For questions or support, contact support@damlook.com.</p>
+          <p>Thank you for choosing NOXVELYN Runway.<br>For questions or support, contact support@noxvelyn.com.</p>
         </div>
         <script>
           window.onload = function() { window.print(); }

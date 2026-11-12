@@ -35,7 +35,7 @@ export const Footer = () => {
 
           {/* Col 3 */}
           <div className="ecom-footer-col">
-            <h4>About Damlook Runway</h4>
+            <h4>About NOXVELYN Runway</h4>
             <ul>
               <li><a href="#shop-catalog">Try the Look Experience</a></li>
               <li><a href="#shop-catalog">Move to Zero Sustainability</a></li>
@@ -78,7 +78,14 @@ export const Footer = () => {
         {/* Bottom Legal Row */}
         <div className="ecom-footer-bottom">
           <div className="ecom-footer-copy">
-            <span>© 2026 Damlook, Inc. All Rights Reserved.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <img
+                src="/images/noxvelyn-logo-white.png"
+                alt="NOXVELYN"
+                style={{ height: '20px', width: 'auto', opacity: 0.85 }}
+              />
+            </div>
+            <span>© 2026 NOXVELYN, Inc. All Rights Reserved.</span>
             <span style={{ marginLeft: '12px' }}>Try the Look — Runway Edition</span>
           </div>
 

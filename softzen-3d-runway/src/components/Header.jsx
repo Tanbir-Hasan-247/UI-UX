@@ -13,8 +13,12 @@ export const Header = () => {
 
   return (
     <header className="site-header shopify-section-group-header-group">
-      <a href="./" className="brand" aria-label="Damlook home">
-        VELVORYX
+      <a href="./" className="brand" aria-label="NOXVELYN home">
+        <img
+          src="/images/noxvelyn-logo.png"
+          style={{ height: '34px', width: 'auto', objectFit: 'contain' }}
+          alt="NOXVELYN"
+        />
       </a>
 
       <nav aria-label="Main navigation">

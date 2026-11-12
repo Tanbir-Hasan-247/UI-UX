@@ -148,8 +148,8 @@ export const CheckoutModal = () => {
         <div className="ecom-checkout-header">
           <div className="ecom-checkout-brand">
             <img
-              src="/images/damlook-logo.png"
-              alt="Damlook"
+              src="/images/noxvelyn-logo.png"
+              alt="NOXVELYN"
               style={{ height: '28px', width: 'auto', objectFit: 'contain' }}
             />
             <span className="ecom-secure-tag">
