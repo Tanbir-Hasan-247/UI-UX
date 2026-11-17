@@ -29,9 +29,9 @@ export default function ReserveSection({ buildSummary }) {
             <div className="beat-eyebrow">Private Concierge</div>
             <h2 className="section-title">BOOK A PRIVATE DRIVE.</h2>
             <p className="reserve-lead">
-              Experience the ACI Motors M4 Shadow Edition in person. Our product
+              Experience our curated luxury and executive fleet in person. Our product
               specialists will prepare your preferred specification for an
-              accompanied twilight or circuit test drive.
+              accompanied twilight or private test drive.
             </p>
 
             <div className="reserve-perks">

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import BrandLogo from './components/BrandLogo'
 import ConfiguratorSection from './components/ConfiguratorSection'
 import EngineeringSection from './components/EngineeringSection'
 import FinanceSection from './components/FinanceSection'
@@ -35,15 +36,86 @@ function normalizePath(pathname) {
   return VALID_PATHS.has(clean) ? clean : '/'
 }
 
+function getInitialTheme() {
+  if (typeof document !== 'undefined') {
+    const attr = document.documentElement.getAttribute('data-theme')
+    if (attr === 'light' || attr === 'dark') return attr
+  }
+  try {
+    const saved = localStorage.getItem('aci-theme')
+    if (saved === 'light' || saved === 'dark') return saved
+  } catch {
+    // ignore storage access errors
+  }
+  return 'dark'
+}
+
+function ThemeIcon({ theme }) {
+  if (theme === 'dark') {
+    return (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m4.93 4.93 1.41 1.41" />
+        <path d="m17.66 17.66 1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="m6.34 17.66-1.41 1.41" />
+        <path d="m19.07 4.93-1.41 1.41" />
+      </svg>
+    )
+  }
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+    </svg>
+  )
+}
+
 function App() {
   const [route, setRoute] = useState(() =>
     normalizePath(window.location.pathname),
   )
+  const [theme, setTheme] = useState(getInitialTheme)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [selectedTrim, setSelectedTrim] = useState('M4 Shadow Edition')
+  const [selectedTrim, setSelectedTrim] = useState('Mercedes-Benz S 450 4MATIC')
   const [buildSummary, setBuildSummary] = useState('')
-  const [configuredPrice, setConfiguredPrice] = useState(10200000)
+  const [configuredPrice, setConfiguredPrice] = useState(22500000)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    try {
+      localStorage.setItem('aci-theme', theme)
+    } catch {
+      // ignore storage access errors
+    }
+  }, [theme])
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }, [])
 
   const navigate = useCallback((nextPath) => {
     const normalized = normalizePath(nextPath)
@@ -88,11 +160,7 @@ function App() {
             navigate('/')
           }}
         >
-          <img
-            src="/acimotors-logo.svg"
-            alt="ACI Motors"
-            className="nav-brand-logo"
-          />
+          <BrandLogo className="nav-brand-logo" />
         </a>
 
         <nav className="nav-links" aria-label="Primary navigation">
@@ -109,9 +177,29 @@ function App() {
               {item.label}
             </a>
           ))}
+        </nav>
+
+        <div className="nav-actions">
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={
+              theme === 'dark'
+                ? 'Switch to white theme'
+                : 'Switch to dark theme'
+            }
+            title={theme === 'dark' ? 'White theme' : 'Dark theme'}
+          >
+            <ThemeIcon theme={theme} />
+            <span className="theme-toggle-label">
+              {theme === 'dark' ? 'White' : 'Dark'}
+            </span>
+          </button>
+
           <a
             href="/reserve"
-            className={`nav-cta ${route === '/reserve' ? 'nav-cta--active' : ''}`}
+            className={`nav-cta nav-cta-desktop ${route === '/reserve' ? 'nav-cta--active' : ''}`}
             onClick={(e) => {
               e.preventDefault()
               navigate('/reserve')
@@ -119,17 +207,17 @@ function App() {
           >
             Reserve Now
           </a>
-        </nav>
 
-        <button
-          type="button"
-          className="nav-mobile-toggle"
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
-          {menuOpen ? '✕' : '☰'}
-        </button>
+          <button
+            type="button"
+            className="nav-mobile-toggle"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((prev) => !prev)}
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
+        </div>
       </header>
 
       {menuOpen && (
@@ -164,7 +252,10 @@ function App() {
         {route === '/' && (
           <>
             <HeroScroll />
-            <HomeHighlights onNavigate={navigate} />
+            <HomeHighlights
+              onNavigate={navigate}
+              onSelectTrim={setSelectedTrim}
+            />
             <HomeEditorialBand onNavigate={navigate} />
           </>
         )}
@@ -172,10 +263,12 @@ function App() {
         {route === '/models' && (
           <>
             <PageHeader
-              eyebrow="ACI Motors Lineup"
-              title="MODELS & SPECIFICATIONS."
-              subtitle="Explore all three Shadow platform trims—engineered for twilight grand touring, executive comfort, and pure circuit pace."
+              eyebrow="Curated Inventory · 20 Models"
+              title="Executive &amp; Performance Fleet"
+              subtitle="Explore flagship Saloons, luxury SUVs, high-performance AMG/M coupés, and all-electric architectures—curated for Bangladesh with transparent BDT pricing and full BRTA support."
               breadcrumb="Models"
+              bgImage="https://images.unsplash.com/photo-1616591938133-8d6fac01df84?auto=format&fit=crop&w=2000&q=85"
+              badge="2025 Showroom Collection"
               onNavigate={navigate}
             />
             <ModelsSection
@@ -189,14 +282,17 @@ function App() {
         {route === '/configurator' && (
           <>
             <PageHeader
-              eyebrow="Bespoke Studio"
-              title="CONFIGURE YOUR M4."
-              subtitle="Customize exterior paint, forged wheel architecture, and cabin leather in real time with transparent BDT pricing for Bangladesh."
+              eyebrow="Bespoke Studio · Bangladesh"
+              title="Tailor Your Specification"
+              subtitle="Customize exterior finishes, forged wheel packages, and hand-stitched Nappa leather trims across our 20-car lineup with real-time BDT calculation."
               breadcrumb="Configurator"
+              bgImage="https://images.unsplash.com/photo-1666195782998-5189c6a40793?auto=format&fit=crop&w=2000&q=85"
+              badge="Atelier Studio"
               onNavigate={navigate}
             />
             <ConfiguratorSection
               selectedTrim={selectedTrim}
+              onSelectTrim={setSelectedTrim}
               onLockBuild={setBuildSummary}
               onPriceChange={setConfiguredPrice}
               onNavigate={navigate}
@@ -208,10 +304,12 @@ function App() {
         {route === '/engineering' && (
           <>
             <PageHeader
-              eyebrow="Motorsport DNA"
-              title="ENGINEERING & TELEMETRY."
-              subtitle="TwinPower Turbo inline-six architecture, 50:50 chassis balance, and adaptive M drive mode calibration."
+              eyebrow="Affalterbach &amp; M Division DNA"
+              title="Engineering &amp; Telemetry"
+              subtitle="Twin-turbocharged V8 &amp; inline-six architectures, carbon-ceramic braking assemblies, and active aero telemetry tuned for high-speed poise."
               breadcrumb="Engineering"
+              bgImage="https://images.unsplash.com/photo-1631828919462-3a4054d88eac?auto=format&fit=crop&w=2000&q=85"
+              badge="Aerodynamics &amp; Chassis"
               onNavigate={navigate}
             />
             <EngineeringSection />
@@ -223,9 +321,11 @@ function App() {
           <>
             <PageHeader
               eyebrow="ACI Financial Services"
-              title="OWNERSHIP & EMI PLANNER."
-              subtitle="Estimate monthly installments tailored to your configured vehicle price, down payment, and preferred tenure."
+              title="Ownership &amp; EMI Planner"
+              subtitle="Estimate customized monthly installments tailored to your configured vehicle price, down payment percentage, and preferred tenure in BDT."
               breadcrumb="Finance"
+              bgImage="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=2000&q=85"
+              badge="Flexible BDT Terms"
               onNavigate={navigate}
             />
             <FinanceSection
@@ -239,10 +339,12 @@ function App() {
         {route === '/gallery' && (
           <>
             <PageHeader
-              eyebrow="Visual Archive"
-              title="TWILIGHT IN MOTION."
-              subtitle="High-resolution exterior stances, driver cockpit craftsmanship, and laser-etched optical details."
+              eyebrow="Visual Archive · 18 Frames"
+              title="Flagship Fleet &amp; Atelier Gallery"
+              subtitle="High-resolution exterior stances, executive Nappa lounge cockpits, forged monoblock alloys, and all-electric architectures."
               breadcrumb="Gallery"
+              bgImage="https://images.unsplash.com/photo-1602200059552-39ed78989991?auto=format&fit=crop&w=2000&q=85"
+              badge="4K Visual Archive"
               onNavigate={navigate}
             />
             <GallerySection />
@@ -253,9 +355,11 @@ function App() {
           <>
             <PageHeader
               eyebrow="Private Concierge"
-              title="SHOWROOM & TEST DRIVE."
-              subtitle="Schedule an accompanied twilight drive or lock your factory allocation at our Dhaka, Chattogram, or Sylhet lounges."
+              title="Showroom &amp; Private Test Drive"
+              subtitle="Schedule an accompanied twilight drive or reserve your vehicle allocation at our flagship Dhaka (Gulshan &amp; Tejgaon), Chattogram, or Sylhet lounges."
               breadcrumb="Reserve"
+              bgImage="https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=2000&q=85"
+              badge="VIP Allocation Priority"
               onNavigate={navigate}
             />
             <ReserveSection buildSummary={buildSummary} />

@@ -1,3 +1,5 @@
+import BrandLogo from './BrandLogo'
+
 const CURRENT_YEAR = new Date().getFullYear()
 
 export default function Footer({ onNavigate }) {
@@ -9,6 +11,18 @@ export default function Footer({ onNavigate }) {
   return (
     <footer className="footer-rich">
       <div className="section-container">
+        <div className="footer-top-bar">
+          <span className="footer-top-note">
+            ACI MOTORS LIMITED · AUTHORIZED LUXURY &amp; PERFORMANCE SHOWROOM
+          </span>
+          <button
+            type="button"
+            className="footer-back-top"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            Back to top ↑
+          </button>
+        </div>
         <div className="footer-grid">
           <div className="footer-brand-col">
             <a
@@ -17,11 +31,7 @@ export default function Footer({ onNavigate }) {
               aria-label="ACI Motors Limited"
               onClick={(e) => go(e, '/')}
             >
-              <img
-                src="/acimotors-logo.svg"
-                alt="ACI Motors"
-                className="footer-brand-logo"
-              />
+              <BrandLogo className="footer-brand-logo" />
             </a>
             <p className="footer-tagline">
               A subsidiary of ACI Limited. Powering Bangladesh mobility,

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { CARS } from '../data/cars'
+import AutoImageSlider from './AutoImageSlider'
 
 const PAINTS = [
   { id: 'obsidian', name: 'Matte Obsidian', hex: '#14181f', price: 0, filter: 'none' },
@@ -37,19 +39,22 @@ const INTERIORS = [
   { id: 'alcantara', name: 'Alcantara Carbon Track', hex: '#27272a', price: 335000 },
 ]
 
-const EXTERIOR_IMG =
-  'https://images.unsplash.com/photo-1570274419210-bcbb11aa8f73?auto=format&fit=crop&w=1400&q=85'
-const INTERIOR_IMG =
-  'https://images.unsplash.com/photo-1735879254701-e26b19bbf694?auto=format&fit=crop&w=1400&q=85'
-
-const BASE_BDT = 10200000
-
 function formatBdt(amount) {
   return `৳${amount.toLocaleString('en-IN')}`
 }
 
+const FEATURED_CONFIG_IDS = [
+  'mercedes-s-class',
+  'mercedes-amg-g63',
+  'bmw-m4-competition',
+  'porsche-911-carrera-gts',
+  'range-rover-autobiography',
+  'mercedes-eqs-saloon',
+]
+
 export default function ConfiguratorSection({
   selectedTrim,
+  onSelectTrim,
   onLockBuild,
   onPriceChange,
   onNavigate,
@@ -59,18 +64,26 @@ export default function ConfiguratorSection({
   const [interiorId, setInteriorId] = useState('merino')
   const [viewMode, setViewMode] = useState('exterior')
 
+  const activeCar =
+    CARS.find((c) => c.name === selectedTrim) || CARS[0]
   const paint = PAINTS.find((p) => p.id === paintId) || PAINTS[0]
   const wheel = WHEELS.find((w) => w.id === wheelId) || WHEELS[0]
   const interior = INTERIORS.find((i) => i.id === interiorId) || INTERIORS[0]
 
-  const totalBdt = BASE_BDT + paint.price + wheel.price + interior.price
+  const totalBdt =
+    activeCar.priceBdt + paint.price + wheel.price + interior.price
 
   useEffect(() => {
     onPriceChange?.(totalBdt)
   }, [totalBdt, onPriceChange])
 
+  const handleCarChange = (nextId) => {
+    const found = CARS.find((c) => c.id === nextId)
+    if (found) onSelectTrim?.(found.name)
+  }
+
   const handleReserveBuild = () => {
-    const summary = `${selectedTrim || 'M4 Shadow Edition'} · ${paint.name} · ${wheel.name} · ${interior.name} (${formatBdt(totalBdt)})`
+    const summary = `${activeCar.name} · ${paint.name} · ${wheel.name} · ${interior.name} (${formatBdt(totalBdt)})`
     onLockBuild?.(summary)
     onNavigate?.('/reserve')
   }
@@ -81,63 +94,107 @@ export default function ConfiguratorSection({
         <div className="section-header">
           <div>
             <div className="beat-eyebrow">Bespoke Studio · Bangladesh</div>
-            <h2 className="section-title">CONFIGURE YOUR SHADOW.</h2>
+            <h2 className="section-title">Tailor Your Specification</h2>
           </div>
           <p className="section-lead">
-            Tailor exterior finish, forged wheel architecture, and cabin trim in
-            BDT. Switch between exterior and cockpit views below.
+            Choose any vehicle from our {CARS.length}-car inventory, inspect
+            auto-sliding studio angles, and customize finish, wheels, and cabin
+            trim in real time.
           </p>
+        </div>
+
+        {/* Model Selector Strip */}
+        <div className="config-model-bar">
+          <label className="config-model-select-wrap">
+            <span className="config-model-label">Active Vehicle Model</span>
+            <select
+              value={activeCar.id}
+              onChange={(e) => handleCarChange(e.target.value)}
+              className="config-model-select"
+              aria-label="Select vehicle to configure"
+            >
+              {CARS.map((car) => (
+                <option key={car.id} value={car.id}>
+                  {car.name} — {car.shortPrice} ({car.power})
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="config-model-pills">
+            {FEATURED_CONFIG_IDS.map((id) => {
+              const car = CARS.find((c) => c.id === id)
+              if (!car) return null
+              const shortLabel = car.name
+                .replace('Mercedes-Benz ', '')
+                .replace('Mercedes-AMG ', 'AMG ')
+                .replace('4MATIC+', '')
+                .replace('4MATIC', '')
+                .trim()
+              return (
+                <button
+                  key={car.id}
+                  type="button"
+                  className={`config-model-pill ${car.id === activeCar.id ? 'config-model-pill--active' : ''}`}
+                  onClick={() => handleCarChange(car.id)}
+                >
+                  {shortLabel}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <div className="config-layout">
           <div className="config-stage">
             <div className="config-image-wrap">
-              <img
-                src={viewMode === 'exterior' ? EXTERIOR_IMG : INTERIOR_IMG}
-                alt={`ACI Motors ${viewMode === 'exterior' ? paint.name : interior.name}`}
-                style={{
-                  filter: viewMode === 'exterior' ? paint.filter : 'none',
-                }}
-                onError={(e) => {
-                  e.currentTarget.src = '/frames/frame00085.png'
-                }}
+              <AutoImageSlider
+                key={activeCar.id}
+                slides={activeCar.slides}
+                preferredType={viewMode}
+                imageFilter={paint.filter}
+                intervalMs={4000}
+                badge={
+                  <span className="config-swatch-inline">
+                    <span
+                      className="swatch-dot"
+                      style={{
+                        backgroundColor:
+                          viewMode === 'exterior' ? paint.hex : interior.hex,
+                      }}
+                    />
+                    {viewMode === 'exterior' ? paint.name : interior.name}
+                  </span>
+                }
+                topRightSlot={
+                  <div className="config-view-switch">
+                    <button
+                      type="button"
+                      className={`view-switch-btn ${viewMode === 'exterior' ? 'view-switch-btn--active' : ''}`}
+                      onClick={() => setViewMode('exterior')}
+                    >
+                      Exterior
+                    </button>
+                    <button
+                      type="button"
+                      className={`view-switch-btn ${viewMode === 'interior' ? 'view-switch-btn--active' : ''}`}
+                      onClick={() => setViewMode('interior')}
+                    >
+                      Cockpit
+                    </button>
+                  </div>
+                }
               />
-              <div className="config-stage-tag">
-                <span
-                  className="swatch-dot"
-                  style={{
-                    backgroundColor:
-                      viewMode === 'exterior' ? paint.hex : interior.hex,
-                  }}
-                />
-                <span>
-                  {viewMode === 'exterior' ? paint.name : interior.name}
-                </span>
-              </div>
-
-              <div className="config-view-switch">
-                <button
-                  type="button"
-                  className={`view-switch-btn ${viewMode === 'exterior' ? 'view-switch-btn--active' : ''}`}
-                  onClick={() => setViewMode('exterior')}
-                >
-                  Exterior
-                </button>
-                <button
-                  type="button"
-                  className={`view-switch-btn ${viewMode === 'interior' ? 'view-switch-btn--active' : ''}`}
-                  onClick={() => setViewMode('interior')}
-                >
-                  Cockpit
-                </button>
-              </div>
             </div>
 
             <div className="config-summary-bar">
               <div>
-                <div className="config-summary-label">Selected Configuration</div>
+                <div className="config-summary-label">Selected Build</div>
                 <div className="config-summary-title">
-                  {selectedTrim || 'M4 Shadow Edition'} — {paint.name}
+                  {activeCar.name} — {paint.name}
+                </div>
+                <div className="config-summary-sub">
+                  {activeCar.power} · {activeCar.zeroToSixty} (0–100) ·{' '}
+                  {activeCar.drivetrain}
                 </div>
               </div>
               <div className="config-price-block">
@@ -150,7 +207,7 @@ export default function ConfiguratorSection({
           <div className="config-controls">
             <div className="config-group">
               <div className="config-group-head">
-                <span>01 / Exterior Paint</span>
+                <span>01 / Exterior Finish</span>
                 <span className="config-addon">
                   {paint.price === 0 ? 'Included' : `+${formatBdt(paint.price)}`}
                 </span>
@@ -178,7 +235,7 @@ export default function ConfiguratorSection({
 
             <div className="config-group">
               <div className="config-group-head">
-                <span>02 / Wheel Package</span>
+                <span>02 / Forged Wheel Architecture</span>
                 <span className="config-addon">
                   {wheel.price === 0 ? 'Included' : `+${formatBdt(wheel.price)}`}
                 </span>
@@ -202,7 +259,7 @@ export default function ConfiguratorSection({
 
             <div className="config-group">
               <div className="config-group-head">
-                <span>03 / Interior Trim</span>
+                <span>03 / Cabin Upholstery</span>
                 <span className="config-addon">
                   {interior.price === 0
                     ? 'Included'

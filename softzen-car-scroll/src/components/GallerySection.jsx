@@ -1,45 +1,164 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const GALLERY_ITEMS = [
+  // ==========================================
+  // SALOON & SEDAN
+  // ==========================================
   {
-    src: 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1400&q=85',
+    src: 'https://images.unsplash.com/photo-1616591938133-8d6fac01df84?auto=format&fit=crop&w=1400&q=85',
     fallback: '/frames/frame00085.png',
-    category: 'Exterior',
-    title: 'Shadow Edition Stance',
-    caption: 'Exterior · Matte obsidian three-quarter profile',
+    category: 'Saloon & Sedan',
+    title: 'Mercedes-Benz S 450 4MATIC',
+    caption: 'Saloon & Sedan · Obsidian Black flagship stance',
     featured: true,
   },
   {
-    src: 'https://images.unsplash.com/photo-1735879254701-e26b19bbf694?auto=format&fit=crop&w=1400&q=85',
+    src: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1400&q=85',
     fallback: '/frames/frame00043.png',
-    category: 'Cockpit',
-    title: 'Driver-Focused Cockpit',
-    caption: 'Cockpit · Digital cluster & sculpted console',
+    category: 'Saloon & Sedan',
+    title: 'Digital Light Optics & Louver Grille',
+    caption: 'Saloon & Sedan · 1.3M micro-mirror precision beam',
   },
   {
-    src: 'https://images.unsplash.com/photo-1736482582949-da714b927791?auto=format&fit=crop&w=1400&q=85',
+    src: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'Saloon & Sedan',
+    title: 'BMW 735i Pure Excellence',
+    caption: 'Saloon & Sedan · Executive lounge long-wheelbase stance',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00043.png',
+    category: 'Saloon & Sedan',
+    title: 'Audi A8 L 55 TFSI quattro',
+    caption: 'Saloon & Sedan · Mythos Black singleframe architecture',
+  },
+
+  // ==========================================
+  // SUV & OFF-ROADER
+  // ==========================================
+  {
+    src: 'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'SUV & Off-Roader',
+    title: 'Mercedes-AMG G 63 G-Wagon',
+    caption: 'SUV & Off-Roader · Night Black Magno twin side pipes',
+    featured: true,
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1549632891-a0bea6d0355b?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'SUV & Off-Roader',
+    title: 'Range Rover Autobiography LWB',
+    caption: 'SUV & Off-Roader · Floating roof & all-terrain air ride',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00043.png',
+    category: 'SUV & Off-Roader',
+    title: 'BMW X7 xDrive40i M Sport',
+    caption: 'SUV & Off-Roader · 7-seater executive panoramic lounge',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'SUV & Off-Roader',
+    title: 'Porsche Cayenne GTS',
+    caption: 'SUV & Off-Roader · Carmine Red Sport Chrono poise',
+  },
+
+  // ==========================================
+  // COUPÉ & SPORTS
+  // ==========================================
+  {
+    src: 'https://images.unsplash.com/photo-1666195782998-5189c6a40793?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'Coupé & Sports',
+    title: 'Mercedes-AMG GT 63 4MATIC+ Coupé',
+    caption: 'Coupé & Sports · Panamericana aero active rear wing',
+    featured: true,
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'Coupé & Sports',
+    title: 'BMW M4 Competition Coupé',
+    caption: 'Coupé & Sports · Isle of Man Green carbon-roof profile',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1602200059552-39ed78989991?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'Coupé & Sports',
+    title: 'Porsche 911 Carrera GTS Coupé',
+    caption: 'Coupé & Sports · Twin-turbo flat-six rear-engine balance',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1792683472009-3b3339c22bd4?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00043.png',
+    category: 'Coupé & Sports',
+    title: 'Audi RS 7 Sportback performance',
+    caption: 'Coupé & Sports · Nardo Grey widebody quattro stance',
+  },
+
+  // ==========================================
+  // ALL-ELECTRIC
+  // ==========================================
+  {
+    src: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00085.png',
+    category: 'All-Electric',
+    title: 'Mercedes-Benz EQS 450+ Saloon',
+    caption: 'All-Electric · 0.20 Cd One-Bow aero architecture',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00043.png',
+    category: 'All-Electric',
+    title: 'Porsche Taycan 4S',
+    caption: 'All-Electric · 800V dual-motor high-voltage performance',
+  },
+
+  // ==========================================
+  // COCKPIT & CRAFT
+  // ==========================================
+  {
+    src: 'https://images.unsplash.com/photo-1662316203444-9edaa9b76eb4?auto=format&fit=crop&w=1400&q=85',
     fallback: '/frames/frame00065.png',
-    category: 'Cockpit',
-    title: 'M-Spec Steering & Paddles',
-    caption: 'Cockpit · Carbon-trimmed tactile controls',
+    category: 'Cockpit & Craft',
+    title: 'Executive Nappa Leather Lounge',
+    caption: 'Cockpit & Craft · Ambient active light & MBUX OLED console',
   },
   {
-    src: 'https://images.unsplash.com/photo-1728415969478-f9b4d700478e?auto=format&fit=crop&w=1400&q=85',
-    fallback: '/frames/frame00024.png',
-    category: 'Exterior',
-    title: 'Twilight Aero Silhouette',
-    caption: 'Exterior · Track-calibrated stance',
+    src: 'https://images.unsplash.com/photo-1735879254701-e26b19bbf694?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00065.png',
+    category: 'Cockpit & Craft',
+    title: 'Driver-Centric M Cockpit',
+    caption: 'Cockpit & Craft · Curved digital telemetry & carbon console',
   },
   {
-    src: '/frames/frame00001.png',
+    src: 'https://images.unsplash.com/photo-1631828919462-3a4054d88eac?auto=format&fit=crop&w=1400&q=85',
     fallback: '/frames/frame00001.png',
-    category: 'Details',
-    title: 'Laser-Etched Amber DRL',
-    caption: 'Details · Precision optical signature at dusk',
+    category: 'Cockpit & Craft',
+    title: 'Handcrafted AMG 4.0L V8 Biturbo',
+    caption: 'Cockpit & Craft · Affalterbach "One Man, One Engine" plaque',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1632993950443-b33c4cccddbf?auto=format&fit=crop&w=1400&q=85',
+    fallback: '/frames/frame00024.png',
+    category: 'Cockpit & Craft',
+    title: '21" Forged Monoblock & Ceramic Rotors',
+    caption: 'Cockpit & Craft · 6-piston fixed caliper braking assembly',
   },
 ]
 
-const CATEGORIES = ['All', 'Exterior', 'Cockpit', 'Details']
+const CATEGORIES = [
+  'All',
+  'Saloon & Sedan',
+  'SUV & Off-Roader',
+  'Coupé & Sports',
+  'All-Electric',
+  'Cockpit & Craft',
+]
 
 export default function GallerySection() {
   const [category, setCategory] = useState('All')
@@ -53,32 +172,50 @@ export default function GallerySection() {
   const activeItem =
     lightboxIndex !== null ? filteredItems[lightboxIndex] : null
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     setLightboxIndex((idx) =>
-      idx === 0 ? filteredItems.length - 1 : idx - 1,
+      idx === null ? null : idx === 0 ? filteredItems.length - 1 : idx - 1,
     )
-  }
+  }, [filteredItems.length])
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setLightboxIndex((idx) =>
-      idx === filteredItems.length - 1 ? 0 : idx + 1,
+      idx === null ? null : idx === filteredItems.length - 1 ? 0 : idx + 1,
     )
-  }
+  }, [filteredItems.length])
+
+  useEffect(() => {
+    if (lightboxIndex === null) return undefined
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setLightboxIndex(null)
+      if (e.key === 'ArrowLeft') handlePrev()
+      if (e.key === 'ArrowRight') handleNext()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [lightboxIndex, handlePrev, handleNext])
 
   return (
     <section className="page-section page-section--alt" id="gallery">
       <div className="section-container">
         <div className="section-header">
           <div>
-            <div className="beat-eyebrow">Visual Archive</div>
-            <h2 className="section-title">TWILIGHT IN MOTION.</h2>
+            <div className="beat-eyebrow">
+              Visual Archive · {GALLERY_ITEMS.length} Frames
+            </div>
+            <h2 className="section-title">Flagship Fleet &amp; Atelier Gallery</h2>
           </div>
           <div className="section-header-right">
             <p className="section-lead">
-              Explore exterior lines, driver cockpit craftsmanship, and optical
-              details in full resolution.
+              Explore {GALLERY_ITEMS.length} high-resolution frames across
+              executive saloons, luxury off-roaders, precision coupés,
+              all-electric architecture, and bespoke cockpit craftsmanship.
             </p>
-            <div className="gallery-filters" role="tablist" aria-label="Gallery filter">
+            <div
+              className="gallery-filters"
+              role="tablist"
+              aria-label="Gallery filter"
+            >
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
@@ -98,10 +235,10 @@ export default function GallerySection() {
           </div>
         </div>
 
-        <div className="gallery-grid">
+        <div className="gallery-grid gallery-grid--expanded">
           {filteredItems.map((item, idx) => (
             <button
-              key={item.src}
+              key={`${item.src}-${idx}`}
               type="button"
               className={`gallery-card ${item.featured && category === 'All' ? 'gallery-card--featured' : ''}`}
               onClick={() => setLightboxIndex(idx)}
@@ -167,8 +304,14 @@ export default function GallerySection() {
               }}
             />
             <div className="lightbox-meta">
-              <strong>{activeItem.title}</strong>
-              <span>{activeItem.caption}</span>
+              <div>
+                <strong>{activeItem.title}</strong>
+                <span className="lightbox-caption"> — {activeItem.caption}</span>
+              </div>
+              <span className="lightbox-counter">
+                {String(lightboxIndex + 1).padStart(2, '0')} /{' '}
+                {String(filteredItems.length).padStart(2, '0')}
+              </span>
             </div>
           </div>
         </div>
